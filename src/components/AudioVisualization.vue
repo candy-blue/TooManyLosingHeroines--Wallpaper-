@@ -28,7 +28,6 @@ const smoothTransition = (currentValue, previousValue) => {
 };
 
 const wallpaperAudioListener = (audioArray) => {
-  console.log("shapes更新----》",props.borderRadius)
   if (!audioCanvasCtx) return;
   const audioCanvas = audioCanvasRef.value;
   audioCanvasCtx.clearRect(0, 0, audioCanvas.width, audioCanvas.height);
@@ -137,15 +136,12 @@ const drawCircularBars = (audioArray) => {
   }
 };
 
-
-
-
 onMounted(() => {
   if (window.wallpaperRegisterAudioListener) {
     console.log('注册音频监听');
     window.wallpaperRegisterAudioListener(wallpaperAudioListener);
   } else {
-    console.log('未注册音频监听，注册失败');
+    console.log('未注册音频监听');
   }
   initCanvas();
 });

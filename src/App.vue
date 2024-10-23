@@ -11,7 +11,8 @@
       @changeMode="changeMode"
       @removeSong="removeSong"
     ></Playlist>
-    <AudioVisualization v-show="audioVis" :border-radius="imgBorderRadius" :line-color="MusicInfo[songIndex].lineColor"></AudioVisualization>
+    <AudioVisualization v-show="audioVis" :border-radius="imgBorderRadius"
+                        :line-color="MusicInfo[songIndex].lineColor"></AudioVisualization>
     <MainImage :border-radius="imgBorderRadius" :src="srcList[songIndex]"></MainImage>
     <div>
       <OptionBar @audioVisHandle="audioVisHandle" @clockHandler="clockHandle" @playerHandler="playerHandle"
@@ -39,9 +40,9 @@ import AudioVisualization from "@/components/AudioVisualization.vue";
 import Playlist from "@/components/Playlist.vue";
 import MainImage from "@/components/MainImage.vue";
 
-const player = ref(true) // 播放条显示
+const player = ref(true)
 const mode = ref(0)
-const clockShow = ref(true) // 时间显示隐藏
+const clockShow = ref(true)
 const playlistShow = ref(false)
 const audioVis = ref(true)
 const playerIcon = ref([false, false])
@@ -51,7 +52,12 @@ const key = ref(0)
 
 const imgBorderRadius = ref('0')
 
-//新 初始化配置
+// WallpaperEngine setting
+const customBg = ref(false)
+const bgColor = ref('#fff')
+
+
+//初始化配置
 const getOptions = () => {
   try {
     player.value = getItem('player') ? getItem('player') : true
@@ -80,21 +86,37 @@ const getOptions = () => {
 
   try {
     window.wallpaperPropertyListener = {
-      applyUserProperties: function(properties) {
-        console.log('事件更新')
+      applyUserProperties: function (properties) {
         if (properties.shapes) {
-          console.log("shapes----》", properties.shapes.value)
-          if (properties.shapes.value === "1"){
+          if (properties.shapes.value === "1") {
             imgBorderRadius.value = '0'
-          }else if (properties.shapes.value === "2"){
+          } else if (properties.shapes.value === "2") {
             imgBorderRadius.value = '50%'
           }
         }
+        if (properties.bgcolor) {
+          let customColor = properties.bgcolor.value.split(' ');
+          customColor = customColor.map(function (c) {
+            return Math.ceil(c * 255);
+          });
+          bgColor.value = 'rgb(' + customColor + ',0.9)';
+        }
+        if (properties.custombg) {
+          if (properties.custombg.value) {
+            customBg.value = true
+          } else {
+            customBg.value = false
+          }
+        }
+        nextTick(() => {
+          setStyle()
+        })
+
       },
     };
     console.log("wallpaer环境")
-  }catch (e) {
-    console.warn("no wallpaper engine",e)
+  } catch (e) {
+    console.warn("no wallpaper engine", e)
   }
 }
 // 修改player状态
@@ -227,7 +249,12 @@ const getItem = (value) => {
 
 const setStyle = () => {
   const main = document.getElementsByClassName('main')[0]
-  main.style.backgroundColor = MusicInfo.value[songIndex.value].backgroundColor
+  if (customBg.value) {
+    main.style.backgroundColor = bgColor.value
+  } else {
+    main.style.backgroundColor = MusicInfo.value[songIndex.value].backgroundColor
+  }
+
 }
 
 onMounted(() => {
@@ -288,23 +315,5 @@ const getImageList = async () => {
   background-color: orange;
   color: white;
   position: relative;
-}
-
-@keyframes boxRotate {
-  50% {
-    transform: rotate(180deg)
-  }
-}
-
-@keyframes boxTurn {
-  33% {
-    transform: rotate(45deg)
-  }
-  66% {
-    transform: rotate(-45deg)
-  }
-  to {
-    transform: rotate(0deg)
-  }
 }
 </style>

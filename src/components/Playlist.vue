@@ -166,7 +166,6 @@ const titleSize = ref(1);
 
 const onFooter = (add, playlistIndex) => {
   if (add) {
-    console.log("当前播放歌曲--》inex", props.songIndex)
     addSong(props.songIndex, playlistIndex);
   } else {
     removeSong(props.songIndex, playlistIndex);
@@ -223,31 +222,7 @@ watch(() => props.mode, () => {
 </script>
 
 <style scoped>
-.playlist {
-  /* 自定义样式 */
-}
-
-.playlistNavigation {
-  /* 自定义样式 */
-}
-
-.playlist-container {
-  /* 自定义样式 */
-}
-
 .playlist-item-container {
   height: 100%;
-}
-
-.playlist-item {
-  height: 20%;
-}
-
-.playlist-scroll {
-  /* 自定义样式 */
-}
-
-.playlist-scroll-img {
-  /* 自定义样式 */
 }
 </style>
